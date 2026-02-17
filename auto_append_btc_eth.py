@@ -11,8 +11,8 @@ import requests
 # CONFIGURATION
 # -----------------------------
 import os
+# Use environment variable set by GitHub Actions, fallback to local path
 JSON_KEY_PATH = os.environ.get("JSON_KEY_PATH", ".config/tradingbotdata.json")
-  # path in GitHub Actions
 SHEET_NAME = "BTC_ETH_1H_Data"
 ASSETS = ["BTC/USD", "ETH/USD"]
 CANDLE_INTERVAL = "60"  # 1-hour candles
@@ -106,4 +106,5 @@ for asset in ASSETS:
         print(f"Appended {len(df_to_append)} rows for {asset}")
     else:
         print(f"No new candles for {asset}")
+
 
