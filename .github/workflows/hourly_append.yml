@@ -1,9 +1,9 @@
 name: Hourly Append BTC/ETH Data
 
-# Triggers: every hour, or manually
+# Run every hour, or manually
 on:
   schedule:
-    - cron: "0 * * * *"   # run at minute 0 every hour
+    - cron: "0 * * * *"   # at minute 0 every hour
   workflow_dispatch:
 
 jobs:
@@ -11,33 +11,31 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout repo
+      # 1️⃣ Checkout repository
       - uses: actions/checkout@v3
 
-      # Step 2: Set up Python
-      - name: Set up Python
+      # 2️⃣ Set up Python
+      - name: Set up Python 3.10
         uses: actions/setup-python@v4
         with:
           python-version: '3.10'
 
-      # Step 3: Install dependencies
-      - name: Install dependencies
+      # 3️⃣ Install dependencies
+      - name: Install Python dependencies
         run: |
           pip install gspread pandas requests google-auth
 
-      # Step 4: Save Google service key safely using printf to preserve newlines
+      # 4️⃣ Save Google service JSON safely
       - name: Save Google service key
         run: |
           mkdir -p ${{ github.workspace }}/.config
           printf "%s" "${{ secrets.GOOGLE_SERVICE_JSON }}" > ${{ github.workspace }}/.config/tradingbotdata.json
 
-      # Step 5: Optional verification - first few lines of JSON
+      # 5️⃣ Optional: preview first few lines of JSON to verify
       - name: Verify JSON file
-        run: |
-          echo "First 5 lines of Google service JSON:"
-          head -n 5 ${{ github.workspace }}/.config/tradingbotdata.json
+        run: head -n 5 ${{ github.workspace }}/.config/tradingbotdata.json
 
-      # Step 6: Run Python trading bot
+      # 6️⃣ Run your Python script
       - name: Run trading bot
         run: python3 auto_append_btc_eth.py
         env:
