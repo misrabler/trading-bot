@@ -1,6 +1,6 @@
 # auto_append_btc_eth.py
 # BTC/ETH hourly data append bot for Google Sheets
-# Ready for GitHub Actions
+# Fully GitHub Actions compatible
 
 import os
 import pandas as pd
@@ -11,8 +11,11 @@ import requests
 # -----------------------------
 # CONFIGURATION
 # -----------------------------
-# Read JSON key path from environment variable (set in GitHub Actions)
-JSON_KEY_PATH = os.environ.get("JSON_KEY_PATH", ".config/tradingbotdata.json")
+# Read JSON key path from environment variable set in GitHub Actions
+JSON_KEY_PATH = os.environ.get("JSON_KEY_PATH")
+if not JSON_KEY_PATH or not os.path.exists(JSON_KEY_PATH):
+    raise FileNotFoundError(f"Google service JSON not found at: {JSON_KEY_PATH}")
+
 SHEET_NAME = "BTC_ETH_1H_Data"
 ASSETS = ["BTC/USD", "ETH/USD"]
 CANDLE_INTERVAL = "60"  # 1-hour candles
@@ -81,7 +84,7 @@ def write_to_sheet(df, asset_name):
         sheet.append_rows(rows, value_input_option='USER_ENTERED')
 
 # -----------------------------
-# MAIN SCRIPT (runs once)
+# MAIN SCRIPT
 # -----------------------------
 for asset in ASSETS:
     print(f"Processing {asset}...")
