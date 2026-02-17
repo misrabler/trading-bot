@@ -25,13 +25,19 @@ jobs:
         run: |
           pip install gspread pandas requests google-auth
 
-      # Step 4: Save Google service key from secret using printf to preserve formatting
+      # Step 4: Save Google service key safely using printf to preserve newlines
       - name: Save Google service key
         run: |
           mkdir -p ${{ github.workspace }}/.config
           printf "%s" "${{ secrets.GOOGLE_SERVICE_JSON }}" > ${{ github.workspace }}/.config/tradingbotdata.json
 
-      # Step 5: Run Python trading bot
+      # Step 5: Optional verification - first few lines of JSON
+      - name: Verify JSON file
+        run: |
+          echo "First 5 lines of Google service JSON:"
+          head -n 5 ${{ github.workspace }}/.config/tradingbotdata.json
+
+      # Step 6: Run Python trading bot
       - name: Run trading bot
         run: python3 auto_append_btc_eth.py
         env:
