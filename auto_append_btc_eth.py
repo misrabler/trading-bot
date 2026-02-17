@@ -14,7 +14,7 @@ JSON_KEY_PATH = os.environ.get("JSON_KEY_PATH")
 if not JSON_KEY_PATH or not os.path.exists(JSON_KEY_PATH):
     raise FileNotFoundError(f"Google service JSON not found at: {JSON_KEY_PATH}")
 
-SHEET_NAME = "BTC_ETH_1H_Data"
+SHEET_NAME = "BTC_ETH_1H_Data"  # Replace with your sheet name
 ASSETS = ["BTC/USD", "ETH/USD"]
 CANDLE_INTERVAL = "60"  # 1-hour candles
 ROLLING_TAIL = 20       # for combining prior data with new
