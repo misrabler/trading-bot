@@ -2,6 +2,7 @@
 # BTC/ETH hourly data append bot for Google Sheets
 # Ready for GitHub Actions
 
+import os
 import pandas as pd
 import gspread
 from google.oauth2.service_account import Credentials
@@ -10,8 +11,7 @@ import requests
 # -----------------------------
 # CONFIGURATION
 # -----------------------------
-import os
-# Use environment variable set by GitHub Actions, fallback to local path
+# Read JSON key path from environment variable (set in GitHub Actions)
 JSON_KEY_PATH = os.environ.get("JSON_KEY_PATH", ".config/tradingbotdata.json")
 SHEET_NAME = "BTC_ETH_1H_Data"
 ASSETS = ["BTC/USD", "ETH/USD"]
@@ -87,24 +87,22 @@ for asset in ASSETS:
     print(f"Processing {asset}...")
     all_records = sheet.get_all_records()
     df_existing = pd.DataFrame(all_records)
-    df_existing_asset = df_existing[df_existing['Asset']==asset]
+    df_existing_asset = df_existing[df_existing['Asset']==asset] if not df_existing.empty else pd.DataFrame()
 
     last_time = pd.to_datetime(df_existing_asset['Timestamp'].iloc[-1]) if not df_existing_asset.empty else None
     since_unix = int(last_time.timestamp()) if last_time else None
     df_new = fetch_kraken_ohlcv(asset, CANDLE_INTERVAL, since=since_unix)
 
     if not df_new.empty:
-        tail_rows = df_existing_asset.tail(ROLLING_TAIL).copy()
+        tail_rows = df_existing_asset.tail(ROLLING_TAIL).copy() if not df_existing_asset.empty else pd.DataFrame()
         if not tail_rows.empty:
             tail_rows.loc[:, "time"] = pd.to_datetime(tail_rows["Timestamp"])
             df_combined = pd.concat([tail_rows[["time","Open","High","Low","Close","Volume"]], df_new], ignore_index=True)
         else:
             df_combined = df_new.copy()
         df_combined = calculate_indicators(df_combined)
-        df_to_append = df_combined.iloc[len(tail_rows):]
+        df_to_append = df_combined.iloc[len(tail_rows):] if not tail_rows.empty else df_combined
         write_to_sheet(df_to_append, asset)
         print(f"Appended {len(df_to_append)} rows for {asset}")
     else:
         print(f"No new candles for {asset}")
-
-
