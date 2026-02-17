@@ -11,28 +11,28 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: checkout repo
+      # Step 1: Checkout repo
       - uses: actions/checkout@v3
 
-      # Step 2: set up Python
+      # Step 2: Set up Python
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.10'
 
-      # Step 3: install dependencies
+      # Step 3: Install dependencies
       - name: Install dependencies
         run: |
           pip install gspread pandas requests google-auth
 
-      # Step 4: save Google service key from secret
+      # Step 4: Save Google service key from secret
       - name: Save Google service key
         run: |
-          mkdir -p $GITHUB_WORKSPACE/.config
-          echo "${{ secrets.GOOGLE_SERVICE_JSON }}" > $GITHUB_WORKSPACE/.config/tradingbotdata.json
+          mkdir -p ${{ github.workspace }}/.config
+          echo "${{ secrets.GOOGLE_SERVICE_JSON }}" > ${{ github.workspace }}/.config/tradingbotdata.json
 
-      # Step 5: run Python trading bot
+      # Step 5: Run Python trading bot
       - name: Run trading bot
         run: python3 auto_append_btc_eth.py
         env:
-          JSON_KEY_PATH: $GITHUB_WORKSPACE/.config/tradingbotdata.json
+          JSON_KEY_PATH: ${{ github.workspace }}/.config/tradingbotdata.json
