@@ -1,6 +1,5 @@
 # auto_append_btc_eth.py
 # BTC/ETH hourly data append bot for Google Sheets
-# Fully GitHub Actions compatible
 
 import os
 import pandas as pd
@@ -11,7 +10,6 @@ import requests
 # -----------------------------
 # CONFIGURATION
 # -----------------------------
-# Read JSON key path from environment variable set in GitHub Actions
 JSON_KEY_PATH = os.environ.get("JSON_KEY_PATH")
 if not JSON_KEY_PATH or not os.path.exists(JSON_KEY_PATH):
     raise FileNotFoundError(f"Google service JSON not found at: {JSON_KEY_PATH}")
