@@ -25,11 +25,11 @@ jobs:
         run: |
           pip install gspread pandas requests google-auth
 
-      # Step 4: Save Google service key from secret
+      # Step 4: Save Google service key from secret using printf to preserve formatting
       - name: Save Google service key
         run: |
           mkdir -p ${{ github.workspace }}/.config
-          echo "${{ secrets.GOOGLE_SERVICE_JSON }}" > ${{ github.workspace }}/.config/tradingbotdata.json
+          printf "%s" "${{ secrets.GOOGLE_SERVICE_JSON }}" > ${{ github.workspace }}/.config/tradingbotdata.json
 
       # Step 5: Run Python trading bot
       - name: Run trading bot
