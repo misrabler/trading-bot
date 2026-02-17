@@ -1,4 +1,4 @@
-\# auto\_append\_btc\_eth.py
+# auto_append_btc_eth.py
 
 
 
@@ -201,4 +201,5 @@ for asset in ASSETS:
     else:
 
         print(f"No new candles for {asset}")
+
 
